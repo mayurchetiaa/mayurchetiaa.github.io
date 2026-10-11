@@ -38,13 +38,13 @@ if (progress >= 100) {
 
 document.body.classList.add("loading");
 
-const timer = setInterval(updateLoading, 40);
+const timer = setInterval(updateLoading, 20);
 
 // Safety fallback: never leave the welcome screen stuck.
 setTimeout(() => {
 if (loader) loader.classList.add("hide");
 document.body.classList.remove("loading");
-}, 6000);
+}, 2000);
 
 function setupWebsite() {
 const gallery = document.getElementById("gallery");

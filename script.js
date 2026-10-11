@@ -1,6 +1,6 @@
  const photos = [
 {
-image: "images/IMG_0693.jpeg",
+image: "IMG_0693.jpeg",
 title: "Untitled 01",
 category: "Nature",
 description: "A moment captured through my lens."

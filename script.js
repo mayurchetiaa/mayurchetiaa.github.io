@@ -83,52 +83,29 @@ filter.classList.remove("active")
 let progress = 0;
 
 const loadingInterval = setInterval(() => {
-progress += Math.floor(Math.random() * 8) + 3;
+progress = Math.min(progress + 5, 100);
 
-if (progress >= 100) {
-  progress = 100;
-  clearInterval(loadingInterval);
-}
+const loaderBar = document.getElementById("loader-bar");
+const loaderPercent = document.getElementById("loader-percent");
 
 if (loaderBar) {
-  loaderBar.style.width = `${progress}%`;
+loaderBar.style.width = progress + "%";
 }
 
 if (loaderPercent) {
-  loaderPercent.textContent = `${progress}%`;
+loaderPercent.textContent = progress + "%";
 }
 
-if (progress === 100) {
-  setTimeout(() => {
-    if (loader) {
-      loader.classList.add("hide");
-    }
+if (progress >= 100) {
+clearInterval(loadingInterval);
 
-    document.body.classList.remove("loading");
-  }, 350);
+setTimeout(() => {
+  const loader = document.getElementById("loader");
+
+  if (loader) loader.classList.add("hide");
+
+  document.body.classList.remove("loading");
+}, 400);
+
 }
-
 }, 100);
-
-// Prevent scrolling while the loading screen is visible
-document.body.classList.add("loading");
-
-// Reveal gallery cards when they enter the viewport
-if ("IntersectionObserver" in window) {
-const observer = new IntersectionObserver(entries => {
-entries.forEach(entry => {
-if (entry.isIntersecting) {
-entry.target.classList.add("visible");
-observer.unobserve(entry.target);
-}
-});
-}, {
-threshold: 0.1
-});
-
-document.querySelectorAll(".photo-card").forEach(card => {
-  observer.observe(card);
-});
-
-}
-});

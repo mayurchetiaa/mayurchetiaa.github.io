@@ -531,8 +531,10 @@ gap: 35px;
 }
 
 .photo-card img {
+width: 100%;
 height: auto;
-aspect-ratio: 4 / 3;
+aspect-ratio: auto;
+object-fit: contain;
 }
 
 .about-grid {

@@ -583,3 +583,86 @@ pointer-events: none;
 body.loading {
 overflow-y: auto !important;
 }
+
+/* Cinematic Pinterest-style photography gallery */
+#gallery {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+  align-items: start;
+}
+
+#gallery .photo-card {
+  width: 100%;
+  margin: 0;
+  overflow: hidden;
+}
+
+#gallery .photo-image-wrap {
+  width: 100%;
+  overflow: hidden;
+  background: var(--surface);
+}
+
+#gallery .photo-card img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: auto;
+  object-fit: contain;
+  transition: transform 0.5s ease;
+}
+
+#gallery .photo-card:hover img {
+  transform: scale(1.025);
+}
+
+#gallery .photo-info {
+  padding: 14px 2px 20px;
+}
+
+/* Discover more button */
+.load-more-wrap {
+  display: flex;
+  justify-content: center;
+  margin: 38px 0 12px;
+}
+
+#load-more {
+  padding: 15px 28px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+#load-more:hover {
+  background: #fff;
+  color: #111;
+}
+
+#load-more[hidden] {
+  display: none;
+}
+
+/* Tablet */
+@media (max-width: 850px) {
+  #gallery {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+  }
+}
+
+/* Mobile */
+@media (max-width: 520px) {
+  #gallery {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  #gallery .photo-info {
+    padding-top: 10px;
+  }
+}

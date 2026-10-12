@@ -1,10 +1,45 @@
- const photos = [
-{
-image: "IMG_0693.jpeg",
-title: "Untitled 01",
-category: "Nature",
-description: "A moment captured through my lens."
-}
+const photos = [
+  {
+    image: "IMG_0693.jpeg",
+    title: "Untitled 01",
+    category: "Landscapes",
+    description: "A moment captured through my lens."
+  },
+
+  {
+    image: "YOUR_BIRD_PHOTO.jpg",
+    title: "Untitled 02",
+    category: "Wildlife",
+    description: "A quiet moment in the wild."
+  },
+
+  {
+    image: "YOUR_FLOWER_PHOTO.jpg",
+    title: "Untitled 03",
+    category: "Nature",
+    description: "Finding beauty in the little things."
+  },
+
+  {
+    image: "YOUR_STREET_PHOTO.jpg",
+    title: "Untitled 04",
+    category: "Street",
+    description: "Every street has a story."
+  },
+
+  {
+    image: "YOUR_CINEMATIC_PHOTO.jpg",
+    title: "Untitled 05",
+    category: "Cinematic",
+    description: "Life, captured like a film."
+  },
+
+  {
+    image: "YOUR_SUNSET_PHOTO.jpg",
+    title: "Untitled 06",
+    category: "Landscapes",
+    description: "Collecting moments, one frame at a time."
+  }
 ];
 
 (function () {

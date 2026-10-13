@@ -1,668 +1,723 @@
+/* ========================================
+   STORY. — MAYUR CHETIA
+   Cinematic photography portfolio
+======================================== */
+
 :root {
---bg: #101010;
---surface: #181818;
---text: #f2f0eb;
---muted: #99958e;
---accent: #c8a77a;
---line: rgba(255, 255, 255, 0.13);
+  --background: #101010;
+  --surface: #171717;
+  --text: #f0eee9;
+  --muted: #99958e;
+  --accent: #c9a879;
+  --border: rgba(255, 255, 255, 0.12);
+
+  --font-body: "DM Sans", sans-serif;
+  --font-display: "Playfair Display", serif;
+
+  --page-width: 1440px;
+  --page-padding: clamp(22px, 6vw, 88px);
 }
 
 * {
-  margin: 0;
-  padding: 0;
   box-sizing: border-box;
-  }
+}
 
 html {
-scroll-behavior: smooth;
-scroll-padding-top: 80px;
+  scroll-behavior: smooth;
+  scroll-padding-top: 85px;
 }
 
 body {
-background: var(--bg);
-color: var(--text);
-font-family: "DM Sans", sans-serif;
-line-height: 1.7;
-overflow-x: hidden;
+  margin: 0;
+  background: var(--background);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 14px;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
 }
 
 body.loading {
-overflow: hidden;
+  overflow: hidden;
 }
 
 a {
-color: inherit;
-text-decoration: none;
+  color: inherit;
+  text-decoration: none;
 }
 
 button {
-font: inherit;
+  font: inherit;
+}
+
+img {
+  display: block;
+  max-width: 100%;
 }
 
 ::selection {
-background: var(--accent);
-color: #101010;
+  background: var(--accent);
+  color: #101010;
 }
 
-/* LOADING SCREEN */
+/* ========================================
+   LOADING SCREEN
+======================================== */
 
 #loader {
-position: fixed;
-inset: 0;
-z-index: 9999;
-background: #101010;
-display: grid;
-place-items: center;
-transition: opacity 0.8s ease, visibility 0.8s ease;
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #101010;
+  transition: opacity 0.7s ease, visibility 0.7s ease;
 }
 
 #loader.hide {
-opacity: 0;
-visibility: hidden;
-pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
 }
 
 .loader-content {
-width: min(280px, 80vw);
-text-align: center;
+  width: min(280px, 75%);
+  text-align: center;
 }
 
 .loader-brand {
-font-family: "Playfair Display", serif;
-font-size: 4rem;
-letter-spacing: -3px;
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 38px;
+  letter-spacing: -2px;
 }
 
 .loader-intro {
-color: var(--muted);
-font-size: 0.75rem;
-letter-spacing: 2px;
-margin: 8px 0 30px;
+  margin: 8px 0 30px;
+  color: var(--muted);
+  font-size: 11px;
+  letter-spacing: 1px;
 }
 
 .loader-track {
-height: 2px;
-background: #333;
-width: 100%;
+  height: 2px;
+  overflow: hidden;
+  background: #333;
 }
 
 #loader-bar {
-height: 100%;
-width: 0;
-background: var(--accent);
+  width: 0;
+  height: 100%;
+  background: var(--accent);
+  transition: width 0.15s linear;
 }
 
 #loader-percent {
-text-align: right;
-font-size: 0.7rem;
-color: var(--muted);
-margin-top: 10px;
+  margin-top: 12px;
+  color: var(--muted);
+  font-size: 10px;
+  letter-spacing: 2px;
 }
 
-/* NAVIGATION */
+/* ========================================
+   NAVIGATION
+======================================== */
 
 .navbar {
-height: 82px;
-padding: 0 7%;
-display: flex;
-align-items: center;
-justify-content: space-between;
-background: var(--bg);
-border-bottom: 1px solid var(--line);
-position: relative;
-z-index: 10;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 24px var(--page-padding);
 }
 
 .logo {
-font-family: "Playfair Display", serif;
-font-size: 2rem;
-letter-spacing: -1px;
+  font-family: var(--font-display);
+  font-size: 27px;
+  line-height: 1;
+  letter-spacing: -1.5px;
 }
 
 .logo span,
-.hero-content h1 span {
-color: var(--accent);
+.hero h1 span {
+  color: var(--accent);
 }
 
 .navbar nav {
-display: flex;
-gap: 30px;
+  display: flex;
+  align-items: center;
+  gap: clamp(18px, 3vw, 38px);
 }
 
 .navbar nav a {
-font-size: 0.78rem;
-color: #c6c3bd;
-transition: color 0.3s;
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 12px;
+  transition: color 0.25s ease;
 }
 
 .navbar nav a:hover {
-color: var(--accent);
+  color: var(--accent);
 }
 
-/* HERO */
+/* ========================================
+   HERO
+======================================== */
 
 .hero {
-min-height: 670px;
-height: calc(100svh - 82px);
-max-height: 900px;
-position: relative;
-display: flex;
-align-items: center;
-overflow: hidden;
-background: #181818;
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-height: 650px;
+  min-height: min(800px, 100svh);
+  overflow: hidden;
+  padding: 140px var(--page-padding) 100px;
+  background: #151515;
 }
 
 .hero-image {
-position: absolute;
-inset: 0;
-background-size: cover;
-background-position: center;
-opacity: 0.55;
-transform: scale(1.02);
-animation: heroReveal 1.8s ease both;
+  position: absolute;
+  inset: 0;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  transform: scale(1.02);
 }
 
 .hero-overlay {
-position: absolute;
-inset: 0;
-background: linear-gradient(
-90deg,
-rgba(10, 10, 10, 0.93) 0%,
-rgba(10, 10, 10, 0.58) 55%,
-rgba(10, 10, 10, 0.12) 100%
-);
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(
+      90deg,
+      rgba(0, 0, 0, 0.78) 0%,
+      rgba(0, 0, 0, 0.43) 55%,
+      rgba(0, 0, 0, 0.16) 100%
+    ),
+    linear-gradient(
+      0deg,
+      rgba(16, 16, 16, 0.68),
+      transparent 50%
+    );
 }
 
 .hero-content {
-position: relative;
-z-index: 1;
-padding: 60px 10%;
-max-width: 1050px;
-animation: fadeUp 1.2s 0.3s both;
+  position: relative;
+  z-index: 2;
+  width: min(720px, 100%);
 }
 
 .eyebrow {
-font-size: 0.68rem;
-letter-spacing: 3px;
-color: var(--accent);
-margin-bottom: 22px;
+  margin: 0 0 20px;
+  color: var(--accent);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 2.2px;
+  line-height: 1.8;
 }
 
-.hero-content h1 {
-font-family: "Playfair Display", serif;
-font-size: clamp(2.8rem, 6vw, 5.8rem);
-line-height: 1.13;
-font-weight: 400;
-letter-spacing: -2px;
+.hero h1 {
+  max-width: 720px;
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(35px, 5.2vw, 67px);
+  font-weight: 400;
+  line-height: 1.18;
+  letter-spacing: -1.5px;
 }
 
 .hero-author {
-margin-top: 27px;
-font-size: 0.68rem;
-letter-spacing: 2px;
-color: #c2beb7;
+  margin: 27px 0 30px;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 10px;
+  letter-spacing: 1.8px;
 }
 
 .explore {
-display: inline-block;
-margin-top: 42px;
-padding-bottom: 8px;
-border-bottom: 1px solid var(--accent);
-font-size: 0.7rem;
-letter-spacing: 2px;
-transition: color 0.3s;
+  display: inline-block;
+  padding-bottom: 7px;
+  border-bottom: 1px solid var(--accent);
+  font-size: 10px;
+  letter-spacing: 1.6px;
+  transition: color 0.25s ease;
 }
 
 .explore:hover {
-color: var(--accent);
+  color: var(--accent);
 }
 
 .hero-index {
-position: absolute;
-bottom: 35px;
-right: 7%;
-font-size: 0.65rem;
-letter-spacing: 2px;
-color: #c5c0b8;
+  position: absolute;
+  right: var(--page-padding);
+  bottom: 35px;
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 9px;
+  letter-spacing: 2px;
 }
 
-/* SECTIONS */
+/* ========================================
+   SHARED SECTIONS
+======================================== */
 
 .section {
-padding: 120px 10%;
+  width: min(100%, var(--page-width));
+  margin-inline: auto;
+  padding: 110px var(--page-padding);
 }
 
 .section-heading {
-display: flex;
-align-items: end;
-justify-content: space-between;
-gap: 30px;
-margin-bottom: 45px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 25px;
+  margin-bottom: 40px;
 }
 
-.section h2,
+.section-heading .eyebrow {
+  margin-bottom: 10px;
+}
+
+.section-heading h2,
+.about h2,
 .contact h2 {
-font-family: "Playfair Display", serif;
-font-weight: 400;
-font-size: clamp(2.5rem, 5vw, 4.5rem);
-line-height: 1.15;
-letter-spacing: -1.5px;
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(32px, 4vw, 48px);
+  font-weight: 400;
+  line-height: 1.2;
+  letter-spacing: -0.8px;
 }
 
-.section h2 em,
-.contact h2 em,
-.about h2 em {
-color: var(--accent);
-font-weight: 400;
+.section-heading h2 em,
+.about h2 em,
+.contact h2 em {
+  color: var(--accent);
+  font-weight: 400;
 }
 
 .section-note {
-color: var(--muted);
-font-size: 0.85rem;
-padding-bottom: 7px;
+  margin: 0 0 5px;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.9;
 }
 
-/* FILTERS */
+/* ========================================
+   FILTER BUTTONS
+======================================== */
 
 .filters {
-display: flex;
-flex-wrap: wrap;
-gap: 12px;
-margin-bottom: 35px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+  margin-bottom: 28px;
 }
 
 .filter {
-background: transparent;
-color: var(--muted);
-border: 1px solid var(--line);
-padding: 9px 20px;
-border-radius: 30px;
-cursor: pointer;
-font-size: 0.75rem;
-transition: 0.3s;
+  min-height: 36px;
+  padding: 8px 15px;
+  border: 1px solid var(--border);
+  border-radius: 0;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 11px;
+  transition:
+    background 0.25s ease,
+    color 0.25s ease,
+    border-color 0.25s ease;
 }
 
 .filter:hover,
 .filter.active {
-background: var(--text);
-color: var(--bg);
-border-color: var(--text);
+  border-color: var(--accent);
+  background: var(--accent);
+  color: #101010;
 }
 
-/* GALLERY */
+/* ========================================
+   PHOTO GALLERY
+======================================== */
 
 .gallery {
-display: grid;
-grid-template-columns: repeat(2, minmax(0, 1fr));
-gap: 38px 24px;
+  columns: 3 220px;
+  column-gap: 18px;
 }
 
 .photo-card {
-min-width: 0;
-animation: fadeUp 0.7s both;
+  display: inline-block;
+  width: 100%;
+  margin: 0 0 22px;
+  break-inside: avoid;
+  overflow: hidden;
+  background: transparent;
+  animation: card-appear 0.6s ease both;
 }
 
-.photo-card[hidden] {
-display: none;
-}
+@keyframes card-appear {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
 
-.photo-card img {
-    display: block;
-    width: 100%;
-    height: auto;
-    object-fit: contain;
-    background: var(--surface);
-    transition: filter 0.6s;
-}
-
-.photo-card:hover img {
-filter: brightness(0.83);
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .photo-image-wrap {
-overflow: hidden;
-}
-
-.photo-info {
-padding-top: 17px;
-}
-
-.photo-info span {
-font-size: 0.65rem;
-color: var(--accent);
-letter-spacing: 2px;
-text-transform: uppercase;
-}
-
-.photo-info h3 {
-font-family: "Playfair Display", serif;
-font-size: 1.6rem;
-font-weight: 400;
-margin: 3px 0;
-}
-
-.photo-info p {
-font-size: 0.83rem;
-color: var(--muted);
-}
-
-/* ABOUT */
-
-.about {
-background: var(--surface);
-}
-
-.about-grid {
-display: grid;
-grid-template-columns: 1.1fr 0.9fr;
-gap: 70px;
-align-items: center;
-}
-
-.about h2 {
-font-family: "Playfair Display", serif;
-font-weight: 400;
-font-size: clamp(2.7rem, 5vw, 4.6rem);
-line-height: 1.2;
-letter-spacing: -1px;
-}
-
-.about-text {
-color: #bcb8b1;
-font-size: 0.92rem;
-}
-
-.about-text p {
-margin-bottom: 20px;
-}
-
-.signature {
-color: var(--accent);
-font-family: "Playfair Display", serif;
-font-style: italic;
-font-size: 1.2rem;
-padding-top: 12px;
-}
-
-/* CONTACT */
-
-.contact {
-text-align: center;
-padding-top: 140px;
-padding-bottom: 140px;
-}
-
-.contact .eyebrow {
-margin-bottom: 25px;
-}
-
-.contact h2 {
-margin-bottom: 25px;
-}
-
-.contact > p:not(.eyebrow) {
-color: var(--muted);
-font-size: 0.9rem;
-}
-
-.contact-link {
-display: inline-block;
-margin-top: 35px;
-padding: 14px 28px;
-border: 1px solid var(--accent);
-font-size: 0.72rem;
-letter-spacing: 2px;
-transition: 0.3s;
-}
-
-.contact-link:hover {
-background: var(--accent);
-color: var(--bg);
-}
-
-/* FOOTER */
-
-footer {
-padding: 35px 7%;
-border-top: 1px solid var(--line);
-display: flex;
-align-items: center;
-justify-content: space-between;
-gap: 20px;
-}
-
-footer .logo {
-font-size: 1.7rem;
-}
-
-footer p {
-font-size: 0.72rem;
-color: var(--muted);
-}
-
-/* ANIMATIONS */
-
-@keyframes fadeUp {
-from {
-opacity: 0;
-transform: translateY(25px);
-}
-
-to {
-opacity: 1;
-transform: translateY(0);
-}
-}
-
-@keyframes heroReveal {
-from {
-opacity: 0;
-transform: scale(1.08);
-}
-
-to {
-opacity: 0.55;
-transform: scale(1.02);
-}
-}
-
-/* MOBILE */
-
-@media (max-width: 700px) {
-.navbar {
-height: 70px;
-padding: 0 6%;
-}
-
-.logo {
-font-size: 1.8rem;
-}
-
-.navbar nav {
-gap: 17px;
-}
-
-.navbar nav a {
-font-size: 0.7rem;
-}
-
-.hero {
-min-height: 620px;
-height: 82svh;
-}
-
-.hero-content {
-padding: 40px 7%;
-}
-
-.hero-content h1 {
-font-size: clamp(2.65rem, 10vw, 4rem);
-letter-spacing: -1px;
-}
-
-.hero-overlay {
-background: linear-gradient(
-0deg,
-rgba(10, 10, 10, 0.85),
-rgba(10, 10, 10, 0.32)
-);
-}
-
-.hero-index {
-bottom: 20px;
-right: 7%;
-}
-
-.section {
-padding: 80px 7%;
-}
-
-.section-heading {
-display: block;
-}
-
-.section-note {
-margin-top: 18px;
-}
-
-.gallery {
-grid-template-columns: 1fr;
-gap: 35px;
-}
-
-.photo-card img {
-width: 100%;
-height: auto;
-aspect-ratio: auto;
-object-fit: contain;
-}
-
-.about-grid {
-grid-template-columns: 1fr;
-gap: 35px;
-}
-
-.about h2 {
-font-size: 3rem;
-}
-
-.contact {
-padding-top: 100px;
-padding-bottom: 100px;
-}
-
-footer {
-flex-direction: column;
-text-align: center;
-padding: 35px 7%;
-}
-}
-
-@media (prefers-reduced-motion: reduce) {
-*,
-*::before,
-*::after {
-scroll-behavior: auto !important;
-animation-duration: 0.01ms !important;
-transition-duration: 0.01ms !important;
-}
-  }
-/* Fix: prevent the welcome screen from staying forever */
-#loader {
-animation: emergencyHide 0.5s ease 5s forwards;
-}
-
-@keyframes emergencyHide {
-to {
-opacity: 0;
-visibility: hidden;
-pointer-events: none;
-}
-}
-
-body.loading {
-overflow-y: auto !important;
-}
-
-/* Cinematic Pinterest-style photography gallery */
-#gallery {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 24px;
-  align-items: start;
-}
-
-#gallery .photo-card {
-  width: 100%;
-  margin: 0;
+  position: relative;
   overflow: hidden;
+  background: #1b1b1b;
 }
 
-#gallery .photo-image-wrap {
-  width: 100%;
-  overflow: hidden;
-  background: var(--surface);
-}
-
-#gallery .photo-card img {
+.photo-image-wrap img {
   display: block;
   width: 100%;
   height: auto;
-  aspect-ratio: auto;
   object-fit: contain;
-  transition: transform 0.5s ease;
+  cursor: zoom-in;
+  transition: transform 0.6s ease, opacity 0.3s ease;
 }
 
-#gallery .photo-card:hover img {
+.photo-card:hover .photo-image-wrap img {
   transform: scale(1.025);
 }
 
-#gallery .photo-info {
-  padding: 14px 2px 20px;
+.photo-info {
+  padding: 13px 0 8px;
 }
 
-/* Discover more button */
-.load-more-wrap {
+.photo-info span {
+  color: var(--accent);
+  font-size: 9px;
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+}
+
+.photo-info h3 {
+  margin: 4px 0;
+  color: var(--text);
+  font-family: var(--font-display);
+  font-size: 17px;
+  font-weight: 400;
+  overflow-wrap: anywhere;
+}
+
+.photo-info p {
+  margin: 4px 0 0;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.7;
+}
+
+/* ========================================
+   ABOUT
+======================================== */
+
+.about {
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+.about > .eyebrow {
+  margin-bottom: 35px;
+}
+
+.about-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+  align-items: start;
+  gap: clamp(30px, 7vw, 100px);
+}
+
+.about h2 {
+  font-size: clamp(34px, 4.2vw, 52px);
+  line-height: 1.25;
+}
+
+.about-text {
+  max-width: 440px;
+  padding-top: 6px;
+}
+
+.about-text p {
+  margin: 0 0 20px;
+  color: #b4b0a9;
+  font-size: 13px;
+  line-height: 2;
+}
+
+.about-text .signature {
+  margin-top: 28px;
+  color: var(--accent);
+  font-family: var(--font-display);
+  font-size: 19px;
+  font-style: italic;
+}
+
+/* ========================================
+   CONTACT
+======================================== */
+
+.contact {
+  text-align: center;
+}
+
+.contact .eyebrow {
+  margin-bottom: 22px;
+}
+
+.contact h2 {
+  font-size: clamp(36px, 5vw, 58px);
+}
+
+.contact > p:not(.eyebrow) {
+  margin: 22px 0 27px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.contact-link {
+  display: inline-block;
+  padding: 12px 22px;
+  border: 1px solid var(--accent);
+  color: var(--text);
+  font-size: 11px;
+  transition:
+    background 0.25s ease,
+    color 0.25s ease;
+}
+
+.contact-link:hover {
+  background: var(--accent);
+  color: #101010;
+}
+
+/* ========================================
+   FOOTER
+======================================== */
+
+footer {
   display: flex;
-  justify-content: center;
-  margin: 38px 0 12px;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 15px 25px;
+  padding: 26px var(--page-padding);
+  border-top: 1px solid var(--border);
 }
 
-#load-more {
-  padding: 15px 28px;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  background: transparent;
-  color: inherit;
-  font: inherit;
-  cursor: pointer;
-  transition: background 0.3s ease, color 0.3s ease;
+footer .logo {
+  font-size: 23px;
 }
 
-#load-more:hover {
-  background: #fff;
-  color: #111;
+footer p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 10px;
 }
 
-#load-more[hidden] {
-  display: none;
-}
+/* ========================================
+   RESPONSIVE — TABLETS
+======================================== */
 
-/* Tablet */
-@media (max-width: 850px) {
-  #gallery {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 18px;
+@media (max-width: 800px) {
+  .section {
+    padding-top: 85px;
+    padding-bottom: 85px;
   }
-}
 
-/* Mobile */
-@media (max-width: 520px) {
-  #gallery {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+  .hero {
+    min-height: 680px;
+    min-height: min(760px, 92svh);
+  }
+
+  .section-heading {
+    align-items: flex-start;
+    flex-direction: column;
     gap: 12px;
   }
 
-  #gallery .photo-info {
-    padding-top: 10px;
+  .about-grid {
+    grid-template-columns: 1fr;
+    gap: 25px;
+  }
+
+  .about-text {
+    max-width: 550px;
+  }
+
+  .gallery {
+    columns: 2 180px;
+    column-gap: 14px;
+  }
+
+  .photo-card {
+    margin-bottom: 17px;
   }
 }
+
+/* ========================================
+   RESPONSIVE — PHONES
+======================================== */
+
+@media (max-width: 520px) {
+  :root {
+    --page-padding: 21px;
+  }
+
+  body {
+    font-size: 13px;
+  }
+
+  .navbar {
+    padding-top: 22px;
+    padding-bottom: 22px;
+  }
+
+  .logo {
+    font-size: 25px;
+  }
+
+  .navbar nav {
+    gap: 16px;
+  }
+
+  .navbar nav a {
+    font-size: 11px;
+  }
+
+  .hero {
+    min-height: 630px;
+    min-height: 88svh;
+    padding-top: 120px;
+    padding-bottom: 90px;
+  }
+
+  .hero h1 {
+    font-size: clamp(34px, 8.2vw, 43px);
+    line-height: 1.22;
+    letter-spacing: -0.9px;
+  }
+
+  .hero .eyebrow {
+    font-size: 9px;
+    letter-spacing: 1.6px;
+  }
+
+  .hero-author {
+    font-size: 9px;
+    letter-spacing: 1.2px;
+  }
+
+  .hero-index {
+    bottom: 25px;
+    font-size: 8px;
+  }
+
+  .section {
+    padding-top: 70px;
+    padding-bottom: 70px;
+  }
+
+  .section-heading h2 {
+    font-size: 35px;
+  }
+
+  .section-note {
+    font-size: 11px;
+  }
+
+  .filters {
+    gap: 7px;
+    margin-bottom: 23px;
+  }
+
+  .filter {
+    min-height: 34px;
+    padding: 7px 11px;
+    font-size: 10px;
+  }
+
+  .gallery {
+    columns: 2 0;
+    column-gap: 11px;
+  }
+
+  .photo-card {
+    margin-bottom: 14px;
+  }
+
+  .photo-info {
+    padding-top: 9px;
+  }
+
+  .photo-info span {
+    font-size: 8px;
+    letter-spacing: 0.8px;
+  }
+
+  .photo-info h3 {
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  .photo-info p {
+    font-size: 10px;
+    line-height: 1.6;
+  }
+
+  .about > .eyebrow {
+    margin-bottom: 25px;
+  }
+
+  .about h2 {
+    font-size: 35px;
+    line-height: 1.3;
+  }
+
+  .about-text p {
+    font-size: 12px;
+    line-height: 1.9;
+  }
+
+  .about-text .signature {
+    font-size: 18px;
+  }
+
+  .contact h2 {
+    font-size: 39px;
+  }
+
+  .contact > p:not(.eyebrow) {
+    font-size: 11px;
+    line-height: 1.8;
+  }
+
+  footer {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 11px;
+    padding-top: 25px;
+    padding-bottom: 25px;
+  }
+}
+
+/* Respect reduced-motion preferences */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  }

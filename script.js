@@ -15,23 +15,25 @@
     "Cinematic"
   ];
 
+  // Keep your original photo in the gallery.
+  const originalPhoto = {
+    image: "IMG_0693.jpeg",
+    title: "Untitled 01",
+    category: "Landscapes",
+    description: "A moment captured through my lens."
+  };
+
   let photos = [];
 
   // Loading animation
   let progress = 0;
-
   document.body.classList.add("loading");
 
   const timer = setInterval(() => {
     progress = Math.min(progress + 2, 100);
 
-    if (loaderBar) {
-      loaderBar.style.width = progress + "%";
-    }
-
-    if (loaderPercent) {
-      loaderPercent.textContent = progress + "%";
-    }
+    if (loaderBar) loaderBar.style.width = progress + "%";
+    if (loaderPercent) loaderPercent.textContent = progress + "%";
 
     if (progress >= 100) {
       clearInterval(timer);
@@ -44,7 +46,6 @@
     document.body.classList.remove("loading");
   }
 
-  // Safety fallback
   setTimeout(() => {
     clearInterval(timer);
     hideLoader();
@@ -56,11 +57,17 @@
     const year = document.getElementById("year");
     const filters = document.querySelectorAll(".filter");
 
-    if (year) {
-      year.textContent = new Date().getFullYear();
+    if (year) year.textContent = new Date().getFullYear();
+
+    // Keep the original hero background unchanged.
+    if (heroImage) {
+      heroImage.style.backgroundImage = 'url("IMG_0693.jpeg")';
     }
 
-    // Read every category folder from GitHub
+    // Start with the original photo so it is never lost.
+    photos = [originalPhoto];
+
+    // Automatically discover photos in category folders.
     const results = await Promise.all(
       categories.map(async category => {
         const apiURL =
@@ -68,7 +75,6 @@
 
         try {
           const response = await fetch(apiURL);
-
           if (!response.ok) return [];
 
           const files = await response.json();
@@ -91,25 +97,15 @@
       })
     );
 
-    photos = results.flat();
+    const uploadedPhotos = results.flat();
 
-    // Keep the original photo visible if no category photos are found
-    if (
-      photos.length === 0 &&
-      document.querySelector('img[src="IMG_0693.jpeg"]') === null
-    ) {
-      photos.push({
-        image: "IMG_0693.jpeg",
-        title: "Untitled 01",
-        category: "Nature",
-        description: "A moment captured through my lens."
-      });
-    }
-
-    if (heroImage && photos.length) {
-      heroImage.style.backgroundImage =
-        `url("${photos[0].image}")`;
-    }
+    // Avoid showing the original twice if it is also uploaded in a folder.
+    photos = [
+      originalPhoto,
+      ...uploadedPhotos.filter(photo =>
+        !(photo.title === "IMG_0693" && photo.category === "Landscapes")
+      )
+    ];
 
     function displayPhotos(category) {
       if (!gallery) return;
@@ -125,6 +121,7 @@
               src="${photo.image}"
               alt="${photo.title}"
               loading="lazy"
+              onerror="this.alt='Image could not be loaded';"
             >
           </div>
           <div class="photo-info">
@@ -137,7 +134,7 @@
 
       if (!selected.length) {
         gallery.innerHTML =
-          '<p>Photos for this category will appear here when uploaded.</p>';
+          "<p>Photos for this category will appear here when uploaded.</p>";
       }
     }
 

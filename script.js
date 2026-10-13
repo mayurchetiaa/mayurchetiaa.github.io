@@ -15,7 +15,6 @@
     "Cinematic"
   ];
 
-  // Keep your original photo in the gallery.
   const originalPhoto = {
     image: "IMG_0693.jpeg",
     title: "Untitled 01",
@@ -23,15 +22,13 @@
     description: "A moment captured through my lens."
   };
 
-  let photos = [];
+  let photos = [originalPhoto];
 
-  // Loading animation
-  let progress = 0;
   document.body.classList.add("loading");
 
+  let progress = 0;
   const timer = setInterval(() => {
     progress = Math.min(progress + 2, 100);
-
     if (loaderBar) loaderBar.style.width = progress + "%";
     if (loaderPercent) loaderPercent.textContent = progress + "%";
 
@@ -59,53 +56,9 @@
 
     if (year) year.textContent = new Date().getFullYear();
 
-    // Keep the original hero background unchanged.
     if (heroImage) {
       heroImage.style.backgroundImage = 'url("IMG_0693.jpeg")';
     }
-
-    // Start with the original photo so it is never lost.
-    photos = [originalPhoto];
-
-    // Automatically discover photos in category folders.
-    const results = await Promise.all(
-      categories.map(async category => {
-        const apiURL =
-          `https://api.github.com/repos/${OWNER}/${REPO}/contents/images/${category}?ref=${BRANCH}`;
-
-        try {
-          const response = await fetch(apiURL);
-          if (!response.ok) return [];
-
-          const files = await response.json();
-
-          return files
-            .filter(file =>
-              file.type === "file" &&
-              /\.(jpe?g|png|webp|gif|avif)$/i.test(file.name)
-            )
-            .map(file => ({
-              image: file.download_url,
-              title: file.name.replace(/\.[^/.]+$/, ""),
-              category: category,
-              description: "A moment captured through my lens."
-            }));
-        } catch (error) {
-          console.error("Could not load " + category, error);
-          return [];
-        }
-      })
-    );
-
-    const uploadedPhotos = results.flat();
-
-    // Avoid showing the original twice if it is also uploaded in a folder.
-    photos = [
-      originalPhoto,
-      ...uploadedPhotos.filter(photo =>
-        !(photo.title === "IMG_0693" && photo.category === "Landscapes")
-      )
-    ];
 
     function displayPhotos(category) {
       if (!gallery) return;
@@ -134,7 +87,7 @@
 
       if (!selected.length) {
         gallery.innerHTML =
-          "<p>Photos for this category will appear here when uploaded.</p>";
+          "<p>No photos found in this category.</p>";
       }
     }
 
@@ -147,6 +100,69 @@
         displayPhotos(button.dataset.filter || "All");
       });
     });
+
+    const allResults = await Promise.allSettled(
+      categories.map(async category => {
+        const url =
+          `https://api.github.com/repos/${OWNER}/${REPO}/contents/images/${encodeURIComponent(category)}?ref=${BRANCH}`;
+
+        const response = await fetch(url);
+
+        if (!response.ok) {
+          throw new Error(
+            `${category}: GitHub returned ${response.status}`
+          );
+        }
+
+        const files = await response.json();
+
+        if (!Array.isArray(files)) {
+          throw new Error(`${category}: unexpected response`);
+        }
+
+        return files
+          .filter(file =>
+            file.type === "file" &&
+            /\.(jpe?g|png|webp|gif|avif)$/i.test(file.name)
+          )
+          .map(file => ({
+            image: file.download_url,
+            title: file.name.replace(/\.[^/.]+$/, ""),
+            category,
+            description: "A moment captured through my lens."
+          }));
+      })
+    );
+
+    const uploadedPhotos = allResults
+      .filter(result => result.status === "fulfilled")
+      .flatMap(result => result.value);
+
+    const failedFolders = allResults
+      .map((result, index) =>
+        result.status === "rejected" ? categories[index] : null
+      )
+      .filter(Boolean);
+
+    photos = [
+      originalPhoto,
+      ...uploadedPhotos.filter(photo =>
+        !(photo.title === "IMG_0693" &&
+          photo.category === "Landscapes")
+      )
+    ];
+
+    displayPhotos("All");
+
+    if (failedFolders.length) {
+      console.error("Could not scan these folders:", failedFolders);
+      console.error(
+        "GitHub API requests failed. Check the folder names and try again later."
+      );
+    }
+
+    console.log("Total photos found:", photos.length);
+    console.log("Folders that failed:", failedFolders);
   }
 
   loadPhotos().catch(error => {

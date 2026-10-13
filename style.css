@@ -757,3 +757,94 @@ body.lightbox-active {
     right: 0;
   }
 }
+/* Full-screen photography viewer */
+#photo-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 55px;
+  background: rgba(0, 0, 0, 0.96);
+}
+
+#photo-lightbox.lightbox-open {
+  display: flex;
+}
+
+#lightbox-image {
+  display: block;
+  max-width: 100%;
+  max-height: 82vh;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+}
+
+#lightbox-close,
+#lightbox-prev,
+#lightbox-next {
+  position: absolute;
+  border: none;
+  background: transparent;
+  color: white;
+  cursor: pointer;
+  z-index: 2;
+}
+
+#lightbox-close {
+  top: 15px;
+  right: 22px;
+  font-size: 42px;
+}
+
+#lightbox-prev,
+#lightbox-next {
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 28px;
+  padding: 15px;
+}
+
+#lightbox-prev {
+  left: 8px;
+}
+
+#lightbox-next {
+  right: 8px;
+}
+
+#lightbox-caption {
+  position: absolute;
+  bottom: 15px;
+  left: 15px;
+  right: 15px;
+  text-align: center;
+  color: white;
+  font-size: 13px;
+  letter-spacing: 1px;
+}
+
+body.lightbox-active {
+  overflow: hidden;
+}
+
+@media (max-width: 600px) {
+  #photo-lightbox {
+    padding: 55px 35px;
+  }
+
+  #lightbox-image {
+    max-width: 100%;
+    max-height: 78vh;
+  }
+
+  #lightbox-prev {
+    left: 0;
+  }
+
+  #lightbox-next {
+    right: 0;
+  }
+}

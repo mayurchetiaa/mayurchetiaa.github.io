@@ -721,3 +721,70 @@ footer p {
     transition-duration: 0.01ms !important;
   }
   }
+/* FIX: Restore balanced typography and gallery sizing */
+
+body {
+  font-size: 14px !important;
+}
+
+.navbar nav a {
+  font-size: 12px !important;
+}
+
+.logo {
+  font-size: 27px !important;
+}
+
+.hero-content h1 {
+  font-size: clamp(32px, 5vw, 58px) !important;
+  line-height: 1.2 !important;
+}
+
+.section h2,
+.contact h2 {
+  font-size: clamp(30px, 4vw, 46px) !important;
+}
+
+.about h2 {
+  font-size: clamp(30px, 4vw, 46px) !important;
+}
+
+.about-grid {
+  grid-template-columns: 1fr 1fr !important;
+  gap: 35px !important;
+}
+
+.about-text {
+  font-size: 13px !important;
+}
+
+#gallery {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 18px !important;
+}
+
+#gallery .photo-card img {
+  width: 100% !important;
+  height: auto !important;
+  object-fit: contain !important;
+}
+
+@media (max-width: 600px) {
+  .hero-content h1 {
+    font-size: clamp(30px, 8vw, 40px) !important;
+  }
+
+  .about-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  #gallery {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 12px !important;
+  }
+
+  .about h2 {
+    font-size: 32px !important;
+  }
+}

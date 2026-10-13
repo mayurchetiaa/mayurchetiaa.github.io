@@ -1,10 +1,11 @@
-document.addEventListener("DOMContentLoaded", async () => {
+(function () {
   const loader = document.getElementById("loader");
   const loaderBar = document.getElementById("loader-bar");
   const loaderPercent = document.getElementById("loader-percent");
-  const gallery = document.getElementById("gallery");
-  const filters = document.querySelectorAll(".filter");
-  const year = document.getElementById("year");
+
+  const OWNER = "untoldstoriesfilms";
+  const REPO = "storyy";
+  const BRANCH = "main";
 
   const categories = [
     "Landscapes",
@@ -15,110 +16,143 @@ document.addEventListener("DOMContentLoaded", async () => {
   ];
 
   let photos = [];
-  let currentCategory = "All";
 
-  if (year) {
-    year.textContent = new Date().getFullYear();
-  }
+  // Loading animation
+  let progress = 0;
 
-  function displayPhotos(category = "All") {
-    if (!gallery) return;
+  document.body.classList.add("loading");
 
-    currentCategory = category;
+  const timer = setInterval(() => {
+    progress = Math.min(progress + 2, 100);
 
-    const filteredPhotos = photos.filter(photo =>
-      category === "All" || photo.category === category
-    );
-
-    gallery.innerHTML = "";
-
-    if (filteredPhotos.length === 0) {
-      gallery.innerHTML =
-        '<p style="color:#99958e">More stories coming soon.</p>';
-      return;
+    if (loaderBar) {
+      loaderBar.style.width = progress + "%";
     }
 
-    filteredPhotos.forEach((photo, index) => {
-      const card = document.createElement("article");
-      card.className = "photo-card";
+    if (loaderPercent) {
+      loaderPercent.textContent = progress + "%";
+    }
 
-      const wrap = document.createElement("div");
-      wrap.className = "photo-image-wrap";
+    if (progress >= 100) {
+      clearInterval(timer);
+      hideLoader();
+    }
+  }, 20);
 
-      const img = document.createElement("img");
-      img.src = photo.image;
-      img.alt = photo.title || "Photograph by Mayur Chetia";
-      img.loading = index < 4 ? "eager" : "lazy";
+  function hideLoader() {
+    if (loader) loader.classList.add("hide");
+    document.body.classList.remove("loading");
+  }
 
-      const info = document.createElement("div");
-      info.className = "photo-info";
+  // Safety fallback
+  setTimeout(() => {
+    clearInterval(timer);
+    hideLoader();
+  }, 3000);
 
-      const label = document.createElement("span");
-      label.textContent = photo.category;
+  async function loadPhotos() {
+    const gallery = document.getElementById("gallery");
+    const heroImage = document.getElementById("hero-image");
+    const year = document.getElementById("year");
+    const filters = document.querySelectorAll(".filter");
 
-      const title = document.createElement("h3");
-      title.textContent = photo.title || "Untitled";
+    if (year) {
+      year.textContent = new Date().getFullYear();
+    }
 
-      const description = document.createElement("p");
-      description.textContent =
-        photo.description || "A moment captured through my lens.";
+    // Read every category folder from GitHub
+    const results = await Promise.all(
+      categories.map(async category => {
+        const apiURL =
+          `https://api.github.com/repos/${OWNER}/${REPO}/contents/images/${category}?ref=${BRANCH}`;
 
-      wrap.appendChild(img);
-      info.append(label, title, description);
-      card.append(wrap, info);
-      gallery.appendChild(card);
+        try {
+          const response = await fetch(apiURL);
 
-      img.addEventListener("error", () => {
-        console.error("Could not load image:", photo.image);
+          if (!response.ok) return [];
+
+          const files = await response.json();
+
+          return files
+            .filter(file =>
+              file.type === "file" &&
+              /\.(jpe?g|png|webp|gif|avif)$/i.test(file.name)
+            )
+            .map(file => ({
+              image: file.download_url,
+              title: file.name.replace(/\.[^/.]+$/, ""),
+              category: category,
+              description: "A moment captured through my lens."
+            }));
+        } catch (error) {
+          console.error("Could not load " + category, error);
+          return [];
+        }
+      })
+    );
+
+    photos = results.flat();
+
+    // Keep the original photo visible if no category photos are found
+    if (
+      photos.length === 0 &&
+      document.querySelector('img[src="IMG_0693.jpeg"]') === null
+    ) {
+      photos.push({
+        image: "IMG_0693.jpeg",
+        title: "Untitled 01",
+        category: "Nature",
+        description: "A moment captured through my lens."
+      });
+    }
+
+    if (heroImage && photos.length) {
+      heroImage.style.backgroundImage =
+        `url("${photos[0].image}")`;
+    }
+
+    function displayPhotos(category) {
+      if (!gallery) return;
+
+      const selected = photos.filter(photo =>
+        category === "All" || photo.category === category
+      );
+
+      gallery.innerHTML = selected.map(photo => `
+        <article class="photo-card">
+          <div class="photo-image-wrap">
+            <img
+              src="${photo.image}"
+              alt="${photo.title}"
+              loading="lazy"
+            >
+          </div>
+          <div class="photo-info">
+            <span>${photo.category}</span>
+            <h3>${photo.title}</h3>
+            <p>${photo.description}</p>
+          </div>
+        </article>
+      `).join("");
+
+      if (!selected.length) {
+        gallery.innerHTML =
+          '<p>Photos for this category will appear here when uploaded.</p>';
+      }
+    }
+
+    displayPhotos("All");
+
+    filters.forEach(button => {
+      button.addEventListener("click", () => {
+        filters.forEach(item => item.classList.remove("active"));
+        button.classList.add("active");
+        displayPhotos(button.dataset.filter || "All");
       });
     });
   }
 
-  filters.forEach(button => {
-    button.addEventListener("click", () => {
-      filters.forEach(filter => filter.classList.remove("active"));
-      button.classList.add("active");
-      displayPhotos(button.dataset.filter || "All");
-    });
-  });
-
-  try {
-    if (loaderPercent) loaderPercent.textContent = "30%";
-    if (loaderBar) loaderBar.style.width = "30%";
-
-    const response = await fetch("./images.json");
-
-    if (!response.ok) {
-      throw new Error("Could not load images.json");
-    }
-
-    const imageList = await response.json();
-
-    photos = imageList.filter(photo =>
-      photo.image &&
-      categories.includes(photo.category)
-    );
-
-    if (loaderPercent) loaderPercent.textContent = "80%";
-    if (loaderBar) loaderBar.style.width = "80%";
-
-    displayPhotos("All");
-
-  } catch (error) {
+  loadPhotos().catch(error => {
     console.error("Gallery loading error:", error);
-
-    if (gallery) {
-      gallery.innerHTML =
-        '<p style="color:#99958e">Could not load photographs. Please try again later.</p>';
-    }
-
-  } finally {
-    if (loaderBar) loaderBar.style.width = "100%";
-    if (loaderPercent) loaderPercent.textContent = "100%";
-
-    setTimeout(() => {
-      if (loader) loader.classList.add("hide");
-      document.body.classList.remove("loading");
-    }, 350);
-  }
-});
+  });
+})();
